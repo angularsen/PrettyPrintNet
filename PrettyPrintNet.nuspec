@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>PrettyPrintNet</id>
+    <version>1.0.0</version>
+    <title>PrettyPrint.NET</title>
+    <authors>Andreas Gullberg Larsen</authors>
+    <owners>Andreas Gullberg Larsen</owners>
+    <licenseUrl>https://github.com/anjdreas/PrettyPrintNet/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/anjdreas/PrettyPrintNet</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Human friendly, textual representations of date, time, duration, file size and transfer rate using standard .NET types. It is light-weight, tested and supports PCL.</description>
+    <summary>Simplifies outputting readable text for date, time, duration, file size, transfer rate and so on.</summary>
+    <releaseNotes>First release.</releaseNotes>
+    <copyright>Copyright © 2013 Andreas Gullberg Larsen</copyright>
+    <language>en-US</language>
+    <tags>human friendly readable simple text textual representation date time datetime timespan duration file size transfer rate pcl c# .net</tags>
+  </metadata>
+  <files>
+    <file src="bin\PrettyPrintNet.pcl.dll" target="lib\portable-win+net40+sl40+wp+Xbox40\PrettyPrintNet.pcl.dll" />
+    <file src="bin\PrettyPrintNet.net35.dll" target="lib\net35-client\PrettyPrintNet.net35.dll" />
+    <file src="bin\PrettyPrintNet.sl4.dll" target="lib\sl4\PrettyPrintNet.sl4.dll" />
+    <file src="bin\PrettyPrintNet.netcore45\PrettyPrintNet.netcore45.dll" target="lib\netcore45\PrettyPrintNet.netcore45.dll" />
+  </files>
+</package>
