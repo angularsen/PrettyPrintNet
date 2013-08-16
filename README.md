@@ -5,7 +5,7 @@ Human friendly, textual representations of date, time, duration, file size and t
 
 Install
 =======
-To install PrettyPrint.NET, run the following command in the [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console) or go to the [NuGet site](https://www.nuget.org/packages/UnitsNet/ "NuGet site") for the complete relase history.
+To install PrettyPrint.NET, run the following command in the [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console) or go to the [NuGet site](https://www.nuget.org/packages/PrettyPrintNet/) for the complete relase history.
 
 ![Install-Package PrettyPrintNet](Docs/Images/install_package_prettyprintnet.png "Install-Package PrettyPrintNet")
 
