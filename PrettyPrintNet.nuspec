@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>PrettyPrintNet</id>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <title>PrettyPrint.NET</title>
     <authors>Andreas Gullberg Larsen</authors>
     <owners>Andreas Gullberg Larsen</owners>
@@ -11,7 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Human friendly, textual representations of date, time, duration, file size and transfer rate using standard .NET types. It is light-weight, tested and supports PCL.</description>
     <summary>Simplifies outputting readable text for date, time, duration, file size, transfer rate and so on.</summary>
-    <releaseNotes>First release.</releaseNotes>
+    <releaseNotes>First release. Some preliminary TimeSpan and file size support.</releaseNotes>
     <copyright>Copyright © 2013 Andreas Gullberg Larsen</copyright>
     <language>en-US</language>
     <tags>human friendly readable simple text textual representation date time datetime timespan duration file size transfer rate pcl c# .net</tags>
