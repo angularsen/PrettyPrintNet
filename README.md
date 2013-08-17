@@ -27,6 +27,11 @@ To be Added
 * More cultures and translations
 * Pretty print of units of measure in [Units.NET](https://www.nuget.org/packages/UnitsNet/), such as length, mass and force.
 
+Already Well Covered
+====================
+* Time of day, date and timezones by [DateTime](http://msdn.microsoft.com/en-us/library/system.datetime.aspx) or [NodaTime](https://www.nuget.org/packages/NodaTime)
+
+
 Examples
 ========
 TODO
