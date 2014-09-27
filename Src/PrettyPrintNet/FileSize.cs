@@ -21,13 +21,13 @@ namespace PrettyPrintNet
         {
             GetSuffixFunc[] longEnglishSuffixFuncs =
                 {
-                    v => v == 1 ? "Byte" : "Bytes", 
-                    v => v == 1 ? "KiloByte" : "KiloBytes",
-                    v => v == 1 ? "MegaByte" : "MegaBytes", 
-                    v => v == 1 ? "GigaByte" : "GigaBytes", 
-                    v => v == 1 ? "TeraByte" : "TeraBytes",
-                    v => v == 1 ? "PetaByte" : "PetaBytes", 
-                    //v => v == 1 ? "ExaByte" : "ExaBytes"
+                    v => v == 1 ? "byte" : "bytes", 
+                    v => v == 1 ? "kilobyte" : "kilobytes",
+                    v => v == 1 ? "megabyte" : "megabytes", 
+                    v => v == 1 ? "gigabyte" : "gigabytes", 
+                    v => v == 1 ? "terabyte" : "terabytes",
+                    v => v == 1 ? "petabyte" : "petabytes", 
+                    //v => v == 1 ? "exaByte" : "exabytes"
                 };
 
             GetSuffixFunc[] shortEnglishSuffixFuncs =
@@ -100,7 +100,7 @@ namespace PrettyPrintNet
 
             GetSuffixFunc suffixFunc = suffixes[suffixIndex];
 
-            // Example: 5.35 MB or 5.35 MegaBytes
+            // Example: 5.35 MB or 5.35 megabytes
             string readable = valueInUnit.ToString(stringFormat, culture) + " " + suffixFunc(valueInUnit);
             return readable;
         }
