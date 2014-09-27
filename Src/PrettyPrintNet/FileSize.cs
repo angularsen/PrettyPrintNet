@@ -55,7 +55,7 @@ namespace PrettyPrintNet
         }
 
 
-        public static string GetLongFileSize(ulong bytes, CultureInfo culture = null, string stringFormat = null)
+        public static string ToLongString(ulong bytes, CultureInfo culture = null, string stringFormat = null)
         {
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
@@ -64,7 +64,7 @@ namespace PrettyPrintNet
             return GetFileSize(bytes, suffixFuncs, culture, stringFormat);
         }
 
-        public static string GetShortFileSize(ulong bytes, CultureInfo culture = null, string stringFormat = null)
+        public static string ToShortString(ulong bytes, CultureInfo culture = null, string stringFormat = null)
         {
             if (culture == null)
                 culture = CultureInfo.CurrentCulture;
