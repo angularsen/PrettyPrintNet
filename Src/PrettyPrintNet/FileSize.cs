@@ -94,19 +94,44 @@ namespace PrettyPrintNet
         /// </summary>
         /// <param name="bytes">File size in bytes.</param>
         /// <param name="suffixes">Array of suffix functions, returning a suffix based on the value in the new unit.</param>
-        /// <param name="culture">Culture used in double.ToString(<see cref="stringFormat"/>, <see cref="culture"/>).</param>
-        /// <param name="stringFormat">Format used in double.ToString(<see cref="stringFormat"/>, <see cref="culture"/>).</param>
+        /// <param name="culture">Culture used in double.ToString(<see cref="valueStringFormat" />, <see cref="culture" />).</param>
+        /// <param name="valueStringFormat">
+        ///     Format used in double.ToString(<see cref="valueStringFormat" />, <see cref="culture" />
+        ///     ).
+        /// </param>
         /// <returns></returns>
-        private static string GetFileSize(ulong bytes, GetSuffixFunc[] suffixes, CultureInfo culture, string stringFormat)
+        private static string GetFileSize(ulong bytes, IList<GetSuffixFunc> suffixes, IFormatProvider culture,
+            string valueStringFormat)
         {
-            ulong suffixIndex = bytes == 0 ? 0 : Convert.ToUInt64(Math.Floor(Math.Log(bytes, 1024)));
-            double valueInUnit = Math.Round(bytes/Math.Pow(1024, suffixIndex), 1);
+            int unitSuffixIndex = bytes == 0 ? 0 : Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double valueInUnit = bytes/Math.Pow(1024, unitSuffixIndex);
 
-            GetSuffixFunc suffixFunc = suffixes[suffixIndex];
+            if (valueStringFormat == null)
+                valueStringFormat = GetDefaultStringFormat(valueInUnit);
+
+            GetSuffixFunc suffixFunc = suffixes[unitSuffixIndex];
 
             // Example: 5.35 MB or 5.35 megabytes
-            string readable = valueInUnit.ToString(stringFormat, culture) + " " + suffixFunc(valueInUnit);
+            string readable = valueInUnit.ToString(valueStringFormat, culture) + " " + suffixFunc(valueInUnit);
             return readable;
+        }
+
+        private static string GetDefaultStringFormat(double valueInUnit)
+        {
+            string stringFormat;
+            double abs = Math.Abs(valueInUnit);
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (abs == 0)
+                stringFormat = "0";
+            else if (abs < 10)
+                stringFormat = "0.##";
+            else if (abs < 100)
+                stringFormat = "0.#";
+            else
+            {
+                stringFormat = "0";
+            }
+            return stringFormat;
         }
 
         #endregion
