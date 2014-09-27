@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrettyPrintNet.Tests", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrettyPrintNet.Portable40", "PrettyPrintNet\PrettyPrintNet.Portable40.csproj", "{52C647A6-A05A-4CBD-A18A-9F1D260800F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrettyPrintNet.Portable45", "PrettyPrintNet\PrettyPrintNet.Portable45.csproj", "{AF0E34C1-A975-4DB3-B10A-F44E2292940A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,16 @@ Global
 		{52C647A6-A05A-4CBD-A18A-9F1D260800F8}.Release|ARM.ActiveCfg = Release|Any CPU
 		{52C647A6-A05A-4CBD-A18A-9F1D260800F8}.Release|x64.ActiveCfg = Release|Any CPU
 		{52C647A6-A05A-4CBD-A18A-9F1D260800F8}.Release|x86.ActiveCfg = Release|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Release|ARM.ActiveCfg = Release|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Release|x64.ActiveCfg = Release|Any CPU
+		{AF0E34C1-A975-4DB3-B10A-F44E2292940A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
