@@ -85,5 +85,26 @@ namespace PrettyPrintNet.Tests
             Assert.AreEqual("4 exabytes", FileSize.ToLongString(4 * EB, _enUsCulture));
             Assert.AreEqual("4 EB", FileSize.ToShortString(4 * EB, _enUsCulture));
         }
+
+        [Test]
+        public void DefaultStringFormatUseFewerDecimalsForLargerValues()
+        {
+            ulong MB = Convert.ToUInt64(Math.Pow(1024, 2));
+            Assert.AreEqual("0 bytes", FileSize.ToLongString(0, _enUsCulture));
+            Assert.AreEqual("1.23 megabytes", FileSize.ToLongString(Convert.ToUInt64(1.23456 * MB), _enUsCulture));
+            Assert.AreEqual("10.2 megabytes", FileSize.ToLongString(Convert.ToUInt64(10.23456 * MB), _enUsCulture));
+            Assert.AreEqual("100 megabytes", FileSize.ToLongString(Convert.ToUInt64(100.23456 * MB), _enUsCulture));
+        }
+
+        [Test]
+        public void AppliesCustomStringFormatToValue()
+        {
+            ulong MB = Convert.ToUInt64(Math.Pow(1024, 2));
+            const string stringFormat = "0.000";
+            Assert.AreEqual("0.000 bytes", FileSize.ToLongString(0, _enUsCulture, stringFormat));
+            Assert.AreEqual("1.235 megabytes", FileSize.ToLongString(Convert.ToUInt64(1.23456 * MB), _enUsCulture, stringFormat));
+            Assert.AreEqual("10.235 megabytes", FileSize.ToLongString(Convert.ToUInt64(10.23456 * MB), _enUsCulture, stringFormat));
+            Assert.AreEqual("100.235 megabytes", FileSize.ToLongString(Convert.ToUInt64(100.23456 * MB), _enUsCulture, stringFormat));
+        }
     }
 }
