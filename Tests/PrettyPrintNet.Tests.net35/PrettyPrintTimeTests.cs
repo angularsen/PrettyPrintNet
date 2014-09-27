@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace PrettyPrintNet.Tests
 {
     [TestFixture]
-    public class PrettyPrintTimeSpanTests
+    public class TimeSpanExtensionsTests
     {
         [Test]
         public void MaxParts0Returns0Seconds()
