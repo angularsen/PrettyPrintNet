@@ -8,10 +8,10 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PrettyPrintNet</RootNamespace>
-    <AssemblyName>PrettyPrintNet.net35</AssemblyName>
+    <AssemblyName>PrettyPrintNet</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-	<OutputPath>..\..\build\bin\$(Platform)_$(Configuration)\</OutputPath>
+	<OutputPath>..\..\Artifacts\Bin\Src\$(Platform)_$(Configuration)\net35\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
