@@ -8,7 +8,7 @@ namespace PrettyPrintNet
     /// <summary>
     /// Utilities and helper code for working with TimeSpan.
     /// </summary>
-    public static class PrettyPrintTimeSpan
+    public static class TimeSpanExtensions
     {
         /// <summary>
         /// Returns a human readable string from TimeSpan, with optional parts to include.
