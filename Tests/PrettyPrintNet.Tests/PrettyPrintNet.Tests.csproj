@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PrettyPrintIoTests.cs" />
+    <Compile Include="FileSizeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeSpanExtensionsTests.cs" />
   </ItemGroup>

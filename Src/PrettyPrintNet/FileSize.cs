@@ -11,13 +11,13 @@ namespace PrettyPrintNet
 {
     public delegate string GetSuffixFunc(double value);
 
-    public static class PrettyPrintIo
+    public static class FileSize
     {
         private static readonly CultureInfo DefaultCulture = new CultureInfo("en-US");
         private static readonly Dictionary<string, GetSuffixFunc[]> CultureToLongSuffixFuncs;
         private static readonly Dictionary<string, GetSuffixFunc[]> CultureToShortSuffixFuncs;
 
-        static PrettyPrintIo()
+        static FileSize()
         {
             GetSuffixFunc[] longEnglishSuffixFuncs =
                 {
