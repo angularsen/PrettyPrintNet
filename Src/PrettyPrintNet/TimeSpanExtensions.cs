@@ -18,12 +18,12 @@ namespace PrettyPrintNet
         /// <param name="includePartIfZero">Set to true to always include a part even if its value is zero.</param>
         /// <param name="culture">Specify the culture used to .ToString() the numeric values.</param>
         /// <returns>Human readable string.</returns>
-        public static string ToFriendlyString(this TimeSpan value,
+        public static string ToPrettyString(this TimeSpan value,
                                                    TimeSpanParts partsToInclude,
                                                    bool includePartIfZero = false,
                                                    CultureInfo culture = null)
         {
-            return ToFriendlyString(value, partsToInclude,
+            return ToPrettyString(value, partsToInclude,
                                   includePartIfZero,
                                   seconds => seconds == 1 ? "second" : "seconds",
                                   minutes => minutes == 1 ? "minute" : "minutes",
@@ -42,7 +42,7 @@ namespace PrettyPrintNet
         /// <param name="maxPartsToInclude">The max number of time span parts to include. Units are included from largest to smallest.</param>
         /// <param name="culture">Specify the culture used to .ToString() the numeric values.</param>
         /// <returns>Human readable string.</returns>
-        public static string ToFriendlyString(this TimeSpan value,
+        public static string ToPrettyString(this TimeSpan value,
                                                    int maxPartsToInclude,
                                                    CultureInfo culture = null)
         {
@@ -73,7 +73,7 @@ namespace PrettyPrintNet
                     }
                 }
             }
-            return ToFriendlyString(value, partsToInclude,
+            return ToPrettyString(value, partsToInclude,
                                   false,
                                   seconds => seconds == 1 ? "second" : "seconds",
                                   minutes => minutes == 1 ? "minute" : "minutes",
@@ -133,7 +133,7 @@ namespace PrettyPrintNet
         /// <param name="valueAndUnitSeparator">Function that takes numeric value and returns its unit string representation. This allows the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".</param>
         /// <param name="culture">Specify the culture used to .ToString() the numeric values.</param>
         /// <returns></returns>
-        public static string ToFriendlyString(this TimeSpan value, TimeSpanParts partsToInclude, bool includePartIfZero, Func<long, string> secondStringFunc, Func<long, string> minuteStringFunc , Func<long, string> hourStringFunc , Func<long, string> dayStringFunc , Func<long, string> millisecondStringFunc , Func<long, string> microsecondStringFunc , Func<long, string> nanosecondStringFunc , string partSeparator = ", ", string lastPartSeparator = " and ", string valueAndUnitSeparator = " ", CultureInfo culture = null)
+        public static string ToPrettyString(this TimeSpan value, TimeSpanParts partsToInclude, bool includePartIfZero, Func<long, string> secondStringFunc, Func<long, string> minuteStringFunc , Func<long, string> hourStringFunc , Func<long, string> dayStringFunc , Func<long, string> millisecondStringFunc , Func<long, string> microsecondStringFunc , Func<long, string> nanosecondStringFunc , string partSeparator = ", ", string lastPartSeparator = " and ", string valueAndUnitSeparator = " ", CultureInfo culture = null)
         {
             var parts = new List<string>();
 
