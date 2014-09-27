@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace PrettyPrintNet
@@ -10,240 +9,262 @@ namespace PrettyPrintNet
     /// </summary>
     public static class TimeSpanExtensions
     {
-        /// <summary>
-        ///     Returns a human readable string from TimeSpan, with optional parts to include.
-        /// </summary>
-        /// <param name="value">TimeSpan value.</param>
-        /// <param name="partsToInclude">
-        ///     Which parts of the time span to include, such as minutes and hours. See
-        ///     <see cref="TimeSpanParts" /> for flag values and combinations.
-        /// </param>
-        /// <param name="includePartIfZero">Set to true to always include a part even if its value is zero.</param>
-        /// <param name="culture">Specify the culture used to .ToString() the numeric values.</param>
-        /// <returns>Human readable string.</returns>
-        public static string ToPrettyString(this TimeSpan value,
-            TimeSpanParts partsToInclude,
-            bool includePartIfZero = false,
-            CultureInfo culture = null)
-        {
-            return ToPrettyString(value, partsToInclude,
-                includePartIfZero,
-                seconds => seconds == 1 ? "second" : "seconds",
-                minutes => minutes == 1 ? "minute" : "minutes",
-                hours => hours == 1 ? "hour" : "hours",
-                days => days == 1 ? "day" : "days",
-                milliseconds => milliseconds == 1 ? "millisecond" : "milliseconds",
-                microseconds => microseconds == 1 ? "microsecond" : "microseconds",
-                nanoseconds => nanoseconds == 1 ? "nanosecond" : "nanoseconds",
-                culture: culture);
-        }
+        private static readonly List<TimeSpanUnit> UnitsLargeToSmall =
+            Enum.GetValues(typeof (TimeSpanUnit)).Cast<TimeSpanUnit>().OrderByDescending(v => v).ToList();
 
         /// <summary>
         ///     Returns a human readable string from TimeSpan, with a max number of parts to include. Units are included from
         ///     largest to smallest.
         /// </summary>
-        /// <param name="value">TimeSpan value.</param>
-        /// <param name="maxPartsToInclude">
-        ///     The max number of time span parts to include. Units are included from largest to
-        ///     smallest.
+        /// <param name="value">Time span value.</param>
+        /// <param name="maxUnitGroups">
+        ///     The max number of timespan units to use.
         /// </param>
-        /// <param name="culture">Specify the culture used to .ToString() the numeric values.</param>
+        /// <param name="lowestUnit">Lowest unit to include in string.</param>
+        /// <param name="rep"></param>
+        /// <param name="higestUnit">Highest unit to include in string.</param>
+        /// <param name="formatProvider">Specify the formatProvider used to .ToString() the numeric values.</param>
         /// <returns>Human readable string.</returns>
         public static string ToPrettyString(this TimeSpan value,
-            int maxPartsToInclude,
-            CultureInfo culture = null)
+            int maxUnitGroups,
+            UnitStringRepresentation rep = UnitStringRepresentation.Long,
+            TimeSpanUnit higestUnit = TimeSpanUnit.Days,
+            TimeSpanUnit lowestUnit = TimeSpanUnit.Seconds,
+            IFormatProvider formatProvider = null)
         {
-            var partsLargestToSmallest = new List<TimeSpanParts>
-            {
-                TimeSpanParts.Days,
-                TimeSpanParts.Hours,
-                TimeSpanParts.Minutes,
-                TimeSpanParts.Seconds,
-                TimeSpanParts.Milliseconds,
-                TimeSpanParts.Microseconds,
-                TimeSpanParts.Nanoseconds
-            };
+            if (maxUnitGroups <= 0)
+                throw new ArgumentException("Must be greater than zero.", "maxUnitGroups");
 
-            var partsToInclude = TimeSpanParts.None;
-            int partsIncluded = 0;
-            if (maxPartsToInclude > 0)
-            {
-                foreach (TimeSpanParts part in partsLargestToSmallest)
-                {
-                    long partValue = GetPartValue(value, part);
-                    if (partValue >= 1)
-                    {
-                        partsToInclude |= part;
-                        partsIncluded++;
-                        if (partsIncluded >= maxPartsToInclude)
-                            break;
-                    }
-                }
-            }
-            return ToPrettyString(value, partsToInclude,
-                false,
-                seconds => seconds == 1 ? "second" : "seconds",
-                minutes => minutes == 1 ? "minute" : "minutes",
-                hours => hours == 1 ? "hour" : "hours",
-                days => days == 1 ? "day" : "days",
-                milliseconds => milliseconds == 1 ? "millisecond" : "milliseconds",
-                microseconds => microseconds == 1 ? "microsecond" : "microseconds",
-                nanoseconds => nanoseconds == 1 ? "nanosecond" : "nanoseconds",
-                culture: culture);
+            string unitValueSeparator = GetUnitValueSeparator(rep);
+
+            List<string> unitStrings =
+                UnitsLargeToSmall.Where(t => t <= higestUnit && t >= lowestUnit)
+                    .Select(u => new UnitValue(u, GetTimeSpanUnitValue(value, u)))
+                    .Where(uv => uv.Value > 0)
+                    .Take(maxUnitGroups)
+                    .Select(uv => GetTimeSpanUnitString(uv.Value, uv.Unit, unitValueSeparator, rep, formatProvider))
+                    .ToList();
+
+            if (!unitStrings.Any())
+                return GetTimeSpanUnitString(0, lowestUnit, unitValueSeparator, rep, formatProvider);
+
+            if (unitStrings.Count == 1)
+                return unitStrings.First();
+
+
+            string groupSeparator = GetGroupSeparator(rep);
+            string lastPartSeparator = GetLastGroupSeparator(rep);
+
+            // 3 weeks, 4 days
+            string firstParts = string.Join(groupSeparator, unitStrings.Take(unitStrings.Count - 1).ToArray());
+
+            // 2 hours
+            string lastPart = unitStrings.Last();
+
+            // 3 weeks, 4 days and 2 hours
+            return firstParts + lastPartSeparator + lastPart;
         }
 
-        private static long GetPartValue(TimeSpan value, TimeSpanParts part)
+        private static string GetGroupSeparator(UnitStringRepresentation rep)
         {
-            switch (part)
+            switch (rep)
             {
-                case TimeSpanParts.Days:
+                case UnitStringRepresentation.Compact:
+                    return "";
+                case UnitStringRepresentation.Long:
+                    return ", ";
+                case UnitStringRepresentation.Short:
+                    return " ";
+                default:
+                    throw new NotImplementedException("UnitStringRepresentation: " + rep);
+            }
+        }
+
+        private static string GetLastGroupSeparator(UnitStringRepresentation rep)
+        {
+            switch (rep)
+            {
+                case UnitStringRepresentation.Compact:
+                    return "";
+                case UnitStringRepresentation.Long:
+                    return " and ";
+                case UnitStringRepresentation.Short:
+                    return " ";
+                default:
+                    throw new NotImplementedException("UnitStringRepresentation: " + rep);
+            }
+        }
+
+        private static int GetTimeSpanUnitValue(TimeSpan value, TimeSpanUnit unit)
+        {
+            switch (unit)
+            {
+                case TimeSpanUnit.Days:
                     return value.Days;
 
-                case TimeSpanParts.Hours:
+                case TimeSpanUnit.Hours:
                     return value.Hours;
 
-                case TimeSpanParts.Minutes:
+                case TimeSpanUnit.Minutes:
                     return value.Minutes;
 
-                case TimeSpanParts.Seconds:
+                case TimeSpanUnit.Seconds:
                     return value.Seconds;
 
-                case TimeSpanParts.Milliseconds:
+                case TimeSpanUnit.Milliseconds:
                     return value.Milliseconds;
 
-                case TimeSpanParts.Microseconds:
-                    return Convert.ToInt64(value.Ticks/10.0);
+                    //case TimeSpanUnit.Microseconds:
+                    //    return Convert.ToInt32(value.Ticks / 10.0);
 
-                case TimeSpanParts.Nanoseconds:
-                    return Convert.ToInt64(value.Ticks*100.0);
+                    //case TimeSpanUnit.Nanoseconds:
+                    //    return Convert.ToInt32(value.Ticks * 100.0);
 
                 default:
                     throw new ArgumentException(
                         string.Format(
                             "Flag not supported [{0}]. Note that flag must not be a combination of multiple flags.",
-                            part));
+                            unit));
             }
         }
 
-        /// <summary>
-        ///     Returns a human readable string from TimeSpan, with optional parts to include.
-        /// </summary>
-        /// <param name="value">TimeSpan value.</param>
-        /// <param name="partsToInclude">
-        ///     Which parts of the time span to include, such as minutes and hours. See
-        ///     <see cref="TimeSpanParts" /> for flag values and combinations.
-        /// </param>
-        /// <param name="includePartIfZero">Set to true to always include a part even if its value is zero.</param>
-        /// <param name="secondStringFunc">
-        ///     Function that takes numeric value and returns its unit string representation. This
-        ///     allows the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="minuteStringFunc">
-        ///     Function that takes numeric value and returns its unit string representation. This
-        ///     allows the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="hourStringFunc">
-        ///     Function that takes numeric value and returns its unit string representation. This allows
-        ///     the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="dayStringFunc">
-        ///     Function that takes numeric value and returns its unit string representation. This allows
-        ///     the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="millisecondStringFunc">
-        ///     Function that takes numeric value and returns its unit string representation. This
-        ///     allows the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="microsecondStringFunc">
-        ///     Function that takes numeric value and returns its unit string representation. This
-        ///     allows the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="nanosecondStringFunc">
-        ///     Function that takes numeric value and returns its unit string representation. This
-        ///     allows the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="partSeparator">
-        ///     Function that takes numeric value and returns its unit string representation. This allows
-        ///     the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="lastPartSeparator">
-        ///     Function that takes numeric value and returns its unit string representation. This
-        ///     allows the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="valueAndUnitSeparator">
-        ///     Function that takes numeric value and returns its unit string representation. This
-        ///     allows the client code to take plurality of different cultures into account, such as "1 minute" and "2 minutes".
-        /// </param>
-        /// <param name="culture">Specify the culture used to .ToString() the numeric values.</param>
-        /// <returns></returns>
-        public static string ToPrettyString(this TimeSpan value, TimeSpanParts partsToInclude, bool includePartIfZero,
-            Func<long, string> secondStringFunc, Func<long, string> minuteStringFunc, Func<long, string> hourStringFunc,
-            Func<long, string> dayStringFunc, Func<long, string> millisecondStringFunc,
-            Func<long, string> microsecondStringFunc, Func<long, string> nanosecondStringFunc,
-            string partSeparator = ", ", string lastPartSeparator = " and ", string valueAndUnitSeparator = " ",
-            CultureInfo culture = null)
+        private static string GetTimeSpanUnitString(int value, TimeSpanUnit unit, string unitValueSeparator,
+            UnitStringRepresentation rep, IFormatProvider formatProvider)
         {
-            var parts = new List<string>();
-
-            if (partsToInclude.HasFlag(TimeSpanParts.Days))
-                AddPartString(parts, value.Days, dayStringFunc, includePartIfZero, valueAndUnitSeparator, culture);
-
-            if (partsToInclude.HasFlag(TimeSpanParts.Hours))
-                AddPartString(parts, value.Hours, hourStringFunc, includePartIfZero, valueAndUnitSeparator, culture);
-
-            if (partsToInclude.HasFlag(TimeSpanParts.Minutes))
-                AddPartString(parts, value.Minutes, minuteStringFunc, includePartIfZero, valueAndUnitSeparator, culture);
-
-            if (partsToInclude.HasFlag(TimeSpanParts.Seconds))
-                AddPartString(parts, value.Seconds, secondStringFunc, includePartIfZero, valueAndUnitSeparator, culture);
-
-            if (partsToInclude.HasFlag(TimeSpanParts.Milliseconds))
-                AddPartString(parts, value.Milliseconds, millisecondStringFunc, includePartIfZero, valueAndUnitSeparator,
-                    culture);
-
-            var timeSpanRoundedToMilliseconds = new TimeSpan(value.Days, value.Hours, value.Minutes, value.Seconds,
-                value.Milliseconds);
-            long remainderTicks = (value - timeSpanRoundedToMilliseconds).Ticks;
-
-            if (partsToInclude.HasFlag(TimeSpanParts.Microseconds))
-            {
-                long microseconds = Convert.ToInt64(remainderTicks/10.0);
-                remainderTicks -= microseconds*10;
-                AddPartString(parts, microseconds, microsecondStringFunc, includePartIfZero, valueAndUnitSeparator,
-                    culture);
-            }
-
-            if (partsToInclude.HasFlag(TimeSpanParts.Nanoseconds))
-            {
-                long nanoseconds = Convert.ToInt64(remainderTicks*100.0);
-                AddPartString(parts, nanoseconds, nanosecondStringFunc, includePartIfZero, valueAndUnitSeparator,
-                    culture);
-            }
-
-            if (parts.Count == 0)
-                return "0 seconds";
-
-            if (parts.Count == 1)
-                return parts.First();
-
-            string firstPartsText = string.Join(partSeparator, parts.Take(parts.Count - 1).ToArray());
-            string lastPart = parts.Last();
-            string result = firstPartsText + lastPartSeparator + lastPart;
-            return result;
+            string unitString = GetUnitString(value, unit, rep);
+            return value.ToString(formatProvider) + unitValueSeparator + unitString;
         }
 
-
-        private static void AddPartString(List<string> parts, long partValue, Func<long, string> partStringFunc,
-            bool includePartIfZero, string valueAndUnitSeparator, CultureInfo culture)
+        private static string GetUnitString(int value, TimeSpanUnit unit, UnitStringRepresentation rep)
         {
-            if (partStringFunc == null)
-                throw new ArgumentNullException("partStringFunc",
-                    "Func cannot be null if the corresponding TimeSpanParts flag is set.");
+            switch (rep)
+            {
+                case UnitStringRepresentation.Compact:
+                    return GetCompactUnitString(value, unit);
+                case UnitStringRepresentation.Long:
+                    return GetLongUnitString(value, unit);
+                case UnitStringRepresentation.Short:
+                    return GetShortUnitString(value, unit);
+                default:
+                    throw new NotImplementedException("TimeSpanUnit: " + unit);
+            }
+        }
 
-            if (partValue == 0 && !includePartIfZero)
-                return;
+        private static string GetLongUnitString(int value, TimeSpanUnit unit)
+        {
+            switch (unit)
+            {
+                case TimeSpanUnit.Days:
+                    return value == 1 ? "day" : "days";
 
-            parts.Add(partValue.ToString(culture) + valueAndUnitSeparator + partStringFunc(partValue));
+                case TimeSpanUnit.Hours:
+                    return value == 1 ? "hour" : "hours";
+
+                case TimeSpanUnit.Minutes:
+                    return value == 1 ? "minute" : "minutes";
+
+                case TimeSpanUnit.Seconds:
+                    return value == 1 ? "second" : "seconds";
+
+                case TimeSpanUnit.Milliseconds:
+                    return value == 1 ? "millisecond" : "milliseconds";
+
+                    //case TimeSpanUnit.Microseconds:
+                    //    return value == 1 ? "microsecond" : "microseconds";
+
+                    //case TimeSpanUnit.Nanoseconds:
+                    //    return value == 1 ? "nanosecond" : "nanoseconds";
+
+                default:
+                    throw new NotImplementedException("TimeSpanUnit: " + unit);
+            }
+        }
+
+        private static string GetShortUnitString(int value, TimeSpanUnit unit)
+        {
+            switch (unit)
+            {
+                case TimeSpanUnit.Days:
+                    return value == 1 ? "day" : "days";
+
+                case TimeSpanUnit.Hours:
+                    return value == 1 ? "hr" : "hrs";
+
+                case TimeSpanUnit.Minutes:
+                    return value == 1 ? "min" : "mins";
+
+                case TimeSpanUnit.Seconds:
+                    return value == 1 ? "sec" : "secs";
+
+                case TimeSpanUnit.Milliseconds:
+                    return value == 1 ? "msec" : "msecs";
+
+                    //case TimeSpanUnit.Microseconds:
+                    //    return value == 1 ? "µsec" : "µsecs";
+
+                    //case TimeSpanUnit.Nanoseconds:
+                    //    return value == 1 ? "nsec" : "nsecs";
+
+                default:
+                    throw new NotImplementedException("TimeSpanUnit: " + unit);
+            }
+        }
+
+        private static string GetCompactUnitString(int value, TimeSpanUnit unit)
+        {
+            switch (unit)
+            {
+                case TimeSpanUnit.Days:
+                    return "d";
+
+                case TimeSpanUnit.Hours:
+                    return "h";
+
+                case TimeSpanUnit.Minutes:
+                    return "m";
+
+                case TimeSpanUnit.Seconds:
+                    return "s";
+
+                case TimeSpanUnit.Milliseconds:
+                    return "ms";
+
+                    //case TimeSpanUnit.Microseconds:
+                    //    return value == 1 ? "microsecond" : "microseconds";
+
+                    //case TimeSpanUnit.Nanoseconds:
+                    //    return value == 1 ? "nanosecond" : "nanoseconds";
+
+                default:
+                    throw new NotImplementedException("TimeSpanUnit: " + unit);
+            }
+        }
+
+        private static string GetUnitValueSeparator(UnitStringRepresentation rep)
+        {
+            switch (rep)
+            {
+                case UnitStringRepresentation.Long:
+                    return " ";
+                case UnitStringRepresentation.Short:
+                    return " ";
+                case UnitStringRepresentation.Compact:
+                    return "";
+                default:
+                    throw new NotImplementedException("UnitStringRepresentation: " + rep);
+            }
+        }
+
+        private struct UnitValue
+        {
+            public readonly TimeSpanUnit Unit;
+            public readonly int Value;
+
+            public UnitValue(TimeSpanUnit unit, int value)
+            {
+                Unit = unit;
+                Value = value;
+            }
         }
     }
 }
