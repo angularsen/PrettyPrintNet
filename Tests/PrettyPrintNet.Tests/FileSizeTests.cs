@@ -75,14 +75,15 @@ namespace PrettyPrintNet.Tests
             Assert.AreEqual("500 PB", FileSize.ToShortString(500 * PB, _enUsCulture));
         }
 
-        //[Test]
-        //public void ReturnsExaBytesUnder1024EB()
-        //{
-        //    ulong EB = Convert.ToUInt64(Math.Pow(1024, 6));
-        //    Assert.AreEqual("1 ExaByte", FileSize.ToLongString(1 * EB, _enUsCulture));
-        //    Assert.AreEqual("1 EB", FileSize.ToShortString(1 * EB, _enUsCulture));
-        //    Assert.AreEqual("500 ExaBytes", FileSize.ToLongString(500 * EB, _enUsCulture));
-        //    Assert.AreEqual("500 EB", FileSize.ToShortString(500 * EB, _enUsCulture));
-        //}
+        [Test]
+        public void ReturnsExaBytesUnder1024EB()
+        {
+            // 64-bit unsigned long can only hold 4.6 exabytes of bytes
+            ulong EB = Convert.ToUInt64(Math.Pow(1024, 6));
+            Assert.AreEqual("1 exabyte", FileSize.ToLongString(1 * EB, _enUsCulture));
+            Assert.AreEqual("1 EB", FileSize.ToShortString(1 * EB, _enUsCulture));
+            Assert.AreEqual("4 exabytes", FileSize.ToLongString(4 * EB, _enUsCulture));
+            Assert.AreEqual("4 EB", FileSize.ToShortString(4 * EB, _enUsCulture));
+        }
     }
 }

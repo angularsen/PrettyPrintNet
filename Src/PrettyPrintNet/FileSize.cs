@@ -1,6 +1,8 @@
 ﻿#region Copyright
+
 // 
 // Copyright © 2013-2013 by Initial Force AS.  All rights reserved.
+
 #endregion
 
 using System;
@@ -20,38 +22,40 @@ namespace PrettyPrintNet
         static FileSize()
         {
             GetSuffixFunc[] longEnglishSuffixFuncs =
-                {
-                    v => v == 1 ? "byte" : "bytes", 
-                    v => v == 1 ? "kilobyte" : "kilobytes",
-                    v => v == 1 ? "megabyte" : "megabytes", 
-                    v => v == 1 ? "gigabyte" : "gigabytes", 
-                    v => v == 1 ? "terabyte" : "terabytes",
-                    v => v == 1 ? "petabyte" : "petabytes", 
-                    //v => v == 1 ? "exaByte" : "exabytes"
-                };
+            {
+// ReSharper disable CompareOfFloatsByEqualityOperator
+                value => value == 1 ? "byte" : "bytes",
+                value => value == 1 ? "kilobyte" : "kilobytes",
+                value => value == 1 ? "megabyte" : "megabytes",
+                value => value == 1 ? "gigabyte" : "gigabytes",
+                value => value == 1 ? "terabyte" : "terabytes",
+                value => value == 1 ? "petabyte" : "petabytes",
+                value => value == 1 ? "exabyte" : "exabytes"
+// ReSharper restore CompareOfFloatsByEqualityOperator
+            };
 
             GetSuffixFunc[] shortEnglishSuffixFuncs =
-                {
-                    v => "B", 
-                    v => "KB",
-                    v => "MB",
-                    v => "GB",
-                    v => "TB",
-                    v => "PB", 
-                    //v => "EB"
-                };
+            {
+                value => "B",
+                value => "KB",
+                value => "MB",
+                value => "GB",
+                value => "TB",
+                value => "PB",
+                value => "EB"
+            };
 
-            CultureToLongSuffixFuncs = new Dictionary<string, GetSuffixFunc[]>()
-                {
-                    {"en-US", longEnglishSuffixFuncs},
-                    {"nb-NO", longEnglishSuffixFuncs},
-                };
+            CultureToLongSuffixFuncs = new Dictionary<string, GetSuffixFunc[]>
+            {
+                {"en-US", longEnglishSuffixFuncs},
+                {"nb-NO", longEnglishSuffixFuncs},
+            };
 
-            CultureToShortSuffixFuncs = new Dictionary<string, GetSuffixFunc[]>()
-                {
-                    {"en-US", shortEnglishSuffixFuncs},
-                    {"nb-NO", shortEnglishSuffixFuncs},
-                };
+            CultureToShortSuffixFuncs = new Dictionary<string, GetSuffixFunc[]>
+            {
+                {"en-US", shortEnglishSuffixFuncs},
+                {"nb-NO", shortEnglishSuffixFuncs},
+            };
         }
 
 
@@ -76,7 +80,7 @@ namespace PrettyPrintNet
         #region Private
 
         private static GetSuffixFunc[] GetSuffixesForCulture(CultureInfo culture,
-                                                             Dictionary<string, GetSuffixFunc[]> cultureToSuffixFuncs)
+            Dictionary<string, GetSuffixFunc[]> cultureToSuffixFuncs)
         {
             GetSuffixFunc[] suffixFuncs;
             if (!cultureToSuffixFuncs.TryGetValue(culture.Name, out suffixFuncs))
@@ -86,7 +90,7 @@ namespace PrettyPrintNet
         }
 
         /// <summary>
-        /// Get human readable text for file size, rounding to the largest unit where its value is >= 1.
+        ///     Get human readable text for file size, rounding to the largest unit where its value is >= 1.
         /// </summary>
         /// <param name="bytes">File size in bytes.</param>
         /// <param name="suffixes">Array of suffix functions, returning a suffix based on the value in the new unit.</param>
