@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrettyPrintNet.net35", "PrettyPrintNet\PrettyPrintNet.net35.csproj", "{0110E874-85CC-4571-BE75-91E053C4CA81}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrettyPrintNet.Net35", "PrettyPrintNet\PrettyPrintNet.Net35.csproj", "{0110E874-85CC-4571-BE75-91E053C4CA81}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrettyPrintNet.Tests.net35", "..\Tests\PrettyPrintNet.Tests.net35\PrettyPrintNet.Tests.net35.csproj", "{7E386E6A-3ED8-4002-864B-4165BE85BA6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrettyPrintNet.pcl", "PrettyPrintNet\PrettyPrintNet.pcl.csproj", "{52C647A6-A05A-4CBD-A18A-9F1D260800F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrettyPrintNet.Portable40", "PrettyPrintNet\PrettyPrintNet.Portable40.csproj", "{52C647A6-A05A-4CBD-A18A-9F1D260800F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

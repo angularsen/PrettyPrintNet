@@ -51,9 +51,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Src\PrettyPrintNet\PrettyPrintNet.net35.csproj">
+    <ProjectReference Include="..\..\Src\PrettyPrintNet\PrettyPrintNet.Net35.csproj">
       <Project>{0110E874-85CC-4571-BE75-91E053C4CA81}</Project>
-      <Name>PrettyPrintNet.net35</Name>
+      <Name>PrettyPrintNet.Net35</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
