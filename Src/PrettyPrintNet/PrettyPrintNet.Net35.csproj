@@ -11,7 +11,8 @@
     <AssemblyName>PrettyPrintNet</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-	<OutputPath>..\..\Artifacts\Bin\Src\$(Platform)_$(Configuration)\net35\</OutputPath>
+    <OutputPath>..\..\Artifacts\Bin\Src\$(Platform)_$(Configuration)\net35\</OutputPath>
+    <IntermediateOutputPath>obj\net35\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
