@@ -13,6 +13,11 @@
         Short,
 
         /// <summary>
+        ///     3w 4d 2h
+        /// </summary>
+        CompactWithSpace,
+
+        /// <summary>
         ///     3wk4d2h
         /// </summary>
         Compact,

@@ -4,6 +4,20 @@ using System.Linq;
 
 namespace PrettyPrintNet
 {
+    internal class TimeFormat
+    {
+        public readonly string GroupSeparator;
+        public readonly string LastGroupSeparator;
+        public readonly string UnitValueSeparator;
+
+        public TimeFormat(string groupSeparator, string lastGroupSeparator, string unitValueSeparator)
+        {
+            GroupSeparator = groupSeparator;
+            LastGroupSeparator = lastGroupSeparator;
+            UnitValueSeparator = unitValueSeparator;
+        }
+    }
+
     /// <summary>
     ///     Utilities and helper code for working with TimeSpan.
     /// </summary>
@@ -11,6 +25,19 @@ namespace PrettyPrintNet
     {
         private static readonly List<TimeSpanUnit> UnitsLargeToSmall =
             Enum.GetValues(typeof (TimeSpanUnit)).Cast<TimeSpanUnit>().OrderByDescending(v => v).ToList();
+
+        private static readonly IDictionary<UnitStringRepresentation, TimeFormat> Formats;
+
+        static TimeSpanExtensions()
+        {
+            Formats = new Dictionary<UnitStringRepresentation, TimeFormat>
+            {
+                {UnitStringRepresentation.Long, new TimeFormat(", ", " and ", " ")},
+                {UnitStringRepresentation.Short, new TimeFormat(" ", " ", " ")},
+                {UnitStringRepresentation.CompactWithSpace, new TimeFormat(" ", " ", "")},
+                {UnitStringRepresentation.Compact, new TimeFormat("", "", "")},
+            };
+        }
 
         /// <summary>
         ///     Returns a human readable string from TimeSpan, with a max number of parts to include. Units are included from
@@ -22,77 +49,48 @@ namespace PrettyPrintNet
         /// </param>
         /// <param name="lowestUnit">Lowest unit to include in string.</param>
         /// <param name="rep"></param>
-        /// <param name="higestUnit">Highest unit to include in string.</param>
+        /// <param name="highestUnit">Highest unit to include in string.</param>
         /// <param name="formatProvider">Specify the formatProvider used to .ToString() the numeric values.</param>
         /// <returns>Human readable string.</returns>
         public static string ToPrettyString(this TimeSpan value,
             int maxUnitGroups,
             UnitStringRepresentation rep = UnitStringRepresentation.Long,
-            TimeSpanUnit higestUnit = TimeSpanUnit.Days,
+            TimeSpanUnit highestUnit = TimeSpanUnit.Days,
             TimeSpanUnit lowestUnit = TimeSpanUnit.Seconds,
             IFormatProvider formatProvider = null)
         {
             if (maxUnitGroups <= 0)
                 throw new ArgumentException("Must be greater than zero.", "maxUnitGroups");
 
-            string unitValueSeparator = GetUnitValueSeparator(rep);
+            TimeFormat format;
+            if (!Formats.TryGetValue(rep, out format))
+                throw new NotImplementedException("UnitStringRepresentation: " + rep);
+
+            string unitValueSeparator = format.UnitValueSeparator;
 
             List<string> unitStrings =
-                UnitsLargeToSmall.Where(t => t <= higestUnit && t >= lowestUnit)
+                UnitsLargeToSmall.Where(t => t <= highestUnit && t >= lowestUnit)
                     .Select(u => new UnitValue(u, GetTimeSpanUnitValue(value, u)))
                     .Where(uv => uv.Value > 0)
                     .Take(maxUnitGroups)
-                    .Select(uv => GetTimeSpanUnitString(uv.Value, uv.Unit, unitValueSeparator, rep, formatProvider))
+                    .Select(uv => GetTimeSpanUnitString(uv.Value, uv.Unit, format, rep, formatProvider))
                     .ToList();
 
             if (!unitStrings.Any())
-                return GetTimeSpanUnitString(0, lowestUnit, unitValueSeparator, rep, formatProvider);
+                return GetTimeSpanUnitString(0, lowestUnit, format, rep, formatProvider);
 
             if (unitStrings.Count == 1)
                 return unitStrings.First();
 
 
-            string groupSeparator = GetGroupSeparator(rep);
-            string lastPartSeparator = GetLastGroupSeparator(rep);
-
             // 3 weeks, 4 days
-            string firstParts = string.Join(groupSeparator, unitStrings.Take(unitStrings.Count - 1).ToArray());
+            string firstParts = string.Join(format.GroupSeparator, unitStrings.Take(unitStrings.Count - 1).ToArray());
 
             // 2 hours
             string lastPart = unitStrings.Last();
 
             // 3 weeks, 4 days and 2 hours
-            return firstParts + lastPartSeparator + lastPart;
-        }
-
-        private static string GetGroupSeparator(UnitStringRepresentation rep)
-        {
-            switch (rep)
-            {
-                case UnitStringRepresentation.Compact:
-                    return "";
-                case UnitStringRepresentation.Long:
-                    return ", ";
-                case UnitStringRepresentation.Short:
-                    return " ";
-                default:
-                    throw new NotImplementedException("UnitStringRepresentation: " + rep);
-            }
-        }
-
-        private static string GetLastGroupSeparator(UnitStringRepresentation rep)
-        {
-            switch (rep)
-            {
-                case UnitStringRepresentation.Compact:
-                    return "";
-                case UnitStringRepresentation.Long:
-                    return " and ";
-                case UnitStringRepresentation.Short:
-                    return " ";
-                default:
-                    throw new NotImplementedException("UnitStringRepresentation: " + rep);
-            }
+            return firstParts + format.LastGroupSeparator + lastPart;
         }
 
         private static int GetTimeSpanUnitValue(TimeSpan value, TimeSpanUnit unit)
@@ -128,11 +126,11 @@ namespace PrettyPrintNet
             }
         }
 
-        private static string GetTimeSpanUnitString(int value, TimeSpanUnit unit, string unitValueSeparator,
+        private static string GetTimeSpanUnitString(int value, TimeSpanUnit unit, TimeFormat timeFormat,
             UnitStringRepresentation rep, IFormatProvider formatProvider)
         {
             string unitString = GetUnitString(value, unit, rep);
-            return value.ToString(formatProvider) + unitValueSeparator + unitString;
+            return value.ToString(formatProvider) + timeFormat.UnitValueSeparator + unitString;
         }
 
         private static string GetUnitString(int value, TimeSpanUnit unit, UnitStringRepresentation rep)
@@ -140,7 +138,8 @@ namespace PrettyPrintNet
             switch (rep)
             {
                 case UnitStringRepresentation.Compact:
-                    return GetCompactUnitString(value, unit);
+                case UnitStringRepresentation.CompactWithSpace:
+                    return GetCompactUnitString(unit);
                 case UnitStringRepresentation.Long:
                     return GetLongUnitString(value, unit);
                 case UnitStringRepresentation.Short:
@@ -210,7 +209,7 @@ namespace PrettyPrintNet
             }
         }
 
-        private static string GetCompactUnitString(int value, TimeSpanUnit unit)
+        private static string GetCompactUnitString(TimeSpanUnit unit)
         {
             switch (unit)
             {
@@ -237,21 +236,6 @@ namespace PrettyPrintNet
 
                 default:
                     throw new NotImplementedException("TimeSpanUnit: " + unit);
-            }
-        }
-
-        private static string GetUnitValueSeparator(UnitStringRepresentation rep)
-        {
-            switch (rep)
-            {
-                case UnitStringRepresentation.Long:
-                    return " ";
-                case UnitStringRepresentation.Short:
-                    return " ";
-                case UnitStringRepresentation.Compact:
-                    return "";
-                default:
-                    throw new NotImplementedException("UnitStringRepresentation: " + rep);
             }
         }
 

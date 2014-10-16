@@ -25,7 +25,7 @@ namespace PrettyPrintNet.Tests
         public void ClampsToHighestAndLowestUnit()
         {
             var t = new TimeSpan(days: 2, hours: 3, minutes: 4, seconds: 5, milliseconds: 6);
-            Assert.AreEqual("3 hours and 4 minutes", t.ToPrettyString(4, higestUnit: TimeSpanUnit.Hours, lowestUnit: TimeSpanUnit.Minutes));
+            Assert.AreEqual("3 hours and 4 minutes", t.ToPrettyString(4, highestUnit: TimeSpanUnit.Hours, lowestUnit: TimeSpanUnit.Minutes));
         }
         
         [Test]
@@ -36,6 +36,7 @@ namespace PrettyPrintNet.Tests
 // ReSharper disable once RedundantArgumentDefaultValue
             Assert.AreEqual("3 hours and 4 minutes", t.ToPrettyString(2, rep: UnitStringRepresentation.Long));
             Assert.AreEqual("3 hrs 4 mins", t.ToPrettyString(2, rep: UnitStringRepresentation.Short));
+            Assert.AreEqual("3h 4m", t.ToPrettyString(4, rep: UnitStringRepresentation.CompactWithSpace));
             Assert.AreEqual("3h4m", t.ToPrettyString(4, rep: UnitStringRepresentation.Compact));
         }
 
