@@ -104,7 +104,7 @@ namespace PrettyPrintNet
             string valueStringFormat)
         {
             int unitSuffixIndex = bytes == 0 ? 0 : Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-            double valueInUnit = bytes/Math.Pow(1024, unitSuffixIndex);
+            double valueInUnit = bytes/Math.Pow(1000, unitSuffixIndex);
 
             if (valueStringFormat == null)
                 valueStringFormat = GetDefaultStringFormat(valueInUnit);
