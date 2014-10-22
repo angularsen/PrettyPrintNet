@@ -103,7 +103,7 @@ namespace PrettyPrintNet
         private static string GetFileSize(ulong bytes, IList<GetSuffixFunc> suffixes, IFormatProvider culture,
             string valueStringFormat)
         {
-            int unitSuffixIndex = bytes == 0 ? 0 : Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            int unitSuffixIndex = bytes == 0 ? 0 : Convert.ToInt32(Math.Floor(Math.Log(bytes, 1000)));
             double valueInUnit = bytes/Math.Pow(1000, unitSuffixIndex);
 
             if (valueStringFormat == null)
