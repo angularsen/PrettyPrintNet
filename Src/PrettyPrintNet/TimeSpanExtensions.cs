@@ -115,9 +115,6 @@ namespace PrettyPrintNet
                     return (int) doubleValue;
                 case IntegerRounding.ToNearestOrUp:
                     return Convert.ToInt32(doubleValue);
-                case IntegerRounding.UpEvenForZero:
-                    // Also round zero to 1, to get 1 second remaining instead of 0 seconds remaining
-                    return (int) doubleValue + 1;
                 case IntegerRounding.Up:
                     return (int) Math.Ceiling(doubleValue);
                 default:
