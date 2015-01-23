@@ -17,7 +17,7 @@
     <tags>human friendly pretty readable simple text textual representation date time timespan duration filesize file size transfer rate pcl c# .net</tags>
   </metadata>
   <files>
-    <file src="Artifacts\Bin\Src\AnyCPU_Release\**\PrettyPrintNet.*" target="lib" />
+    <file src="Artifacts\Bin\Src\AnyCPU_Release\**\PrettyPrintNet*.dll" target="lib" />
     <file src="Src\**\*.cs" exclude="Src\**\obj\**\*.cs" target="src" />
   </files>
 </package>
