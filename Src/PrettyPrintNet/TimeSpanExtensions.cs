@@ -64,7 +64,7 @@ namespace PrettyPrintNet
         /// <param name="formatProvider">Specify the formatProvider used to .ToString() the numeric values.</param>
         /// <returns>Human readable string.</returns>
         public static string ToPrettyString(this TimeSpan value,
-            int maxUnitGroups,
+            int maxUnitGroups = 1,
             UnitStringRepresentation rep = UnitStringRepresentation.Long,
             TimeSpanUnit highestUnit = TimeSpanUnit.Days,
             TimeSpanUnit lowestUnit = TimeSpanUnit.Seconds,
