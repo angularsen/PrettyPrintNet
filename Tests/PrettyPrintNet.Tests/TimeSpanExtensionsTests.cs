@@ -8,10 +8,11 @@ namespace PrettyPrintNet.Tests
     public class TimeSpanExtensionsTests
     {
         [Test]
-        public void MaxUnitGroupsOf0Throws()
+        public void MaxUnitGroupsDefaultsTo1IfZeroOrLess()
         {
             var t = new TimeSpan(days: 2, hours: 3, minutes: 4, seconds: 5, milliseconds: 6);
-            Assert.Throws<ArgumentException>(() => t.ToPrettyString(0));
+            Assert.AreEqual("2 days", t.ToPrettyString(0));
+            Assert.AreEqual("2 days", t.ToPrettyString(-1));
         }
 
         [Test]

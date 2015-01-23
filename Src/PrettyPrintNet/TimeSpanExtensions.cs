@@ -72,7 +72,7 @@ namespace PrettyPrintNet
             IFormatProvider formatProvider = null)
         {
             if (maxUnitGroups <= 0)
-                throw new ArgumentException("Must be greater than zero.", "maxUnitGroups");
+                maxUnitGroups = 1;
 
             TimeFormat format;
             if (!Formats.TryGetValue(rep, out format))
