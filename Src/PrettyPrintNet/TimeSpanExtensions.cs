@@ -83,7 +83,7 @@ namespace PrettyPrintNet
             List<string> unitStrings =
                 UnitsLargeToSmall.Where(t => t <= highestUnit && t >= lowestUnit)
                     .Select(unit => new UnitValue(unit, GetInteger(value, unit, unit == lowestUnit, lowestUnitRounding)))
-                    .Where(uv => uv.Value > 0)
+                    .Where(unitValue => unitValue.Value > 0)
                     .Take(maxUnitGroups)
                     .Select(uv => GetTimeSpanUnitString(uv.Value, uv.Unit, format, rep, formatProvider))
                     .ToList();
@@ -95,13 +95,13 @@ namespace PrettyPrintNet
                 return unitStrings.First();
 
 
-            // 3 weeks, 4 days
+            // 1 weeks, 2 days
             string firstParts = string.Join(format.GroupSeparator, unitStrings.Take(unitStrings.Count - 1).ToArray());
 
-            // 2 hours
+            // 3 hours
             string lastPart = unitStrings.Last();
 
-            // 3 weeks, 4 days and 2 hours
+            // 1 weeks, 2 days and 3 hours
             return firstParts + format.LastGroupSeparator + lastPart;
         }
 
