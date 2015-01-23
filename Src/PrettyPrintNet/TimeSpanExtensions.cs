@@ -26,6 +26,16 @@ namespace PrettyPrintNet
         private static readonly List<TimeSpanUnit> UnitsLargeToSmall =
             Enum.GetValues(typeof (TimeSpanUnit)).Cast<TimeSpanUnit>().OrderByDescending(v => v).ToList();
 
+        public static string ToTimeRemainingString(this TimeSpan value,
+            int maxUnitGroups = 1,
+            UnitStringRepresentation rep = UnitStringRepresentation.Long,
+            TimeSpanUnit highestUnit = TimeSpanUnit.Days,
+            TimeSpanUnit lowestUnit = TimeSpanUnit.Seconds,
+            IFormatProvider formatProvider = null)
+        {
+            return ToPrettyString(value, maxUnitGroups, rep, highestUnit, lowestUnit, IntegerRounding.Up, formatProvider);
+        }
+
         private static readonly IDictionary<UnitStringRepresentation, TimeFormat> Formats;
 
         static TimeSpanExtensions()
@@ -50,6 +60,7 @@ namespace PrettyPrintNet
         /// <param name="lowestUnit">Lowest unit to include in string.</param>
         /// <param name="rep"></param>
         /// <param name="highestUnit">Highest unit to include in string.</param>
+        /// <param name="lowestUnitRounding">Rounding behavior of <paramref name="lowestUnit" />.</param>
         /// <param name="formatProvider">Specify the formatProvider used to .ToString() the numeric values.</param>
         /// <returns>Human readable string.</returns>
         public static string ToPrettyString(this TimeSpan value,
@@ -57,6 +68,7 @@ namespace PrettyPrintNet
             UnitStringRepresentation rep = UnitStringRepresentation.Long,
             TimeSpanUnit highestUnit = TimeSpanUnit.Days,
             TimeSpanUnit lowestUnit = TimeSpanUnit.Seconds,
+            IntegerRounding lowestUnitRounding = IntegerRounding.ToNearestOrUp,
             IFormatProvider formatProvider = null)
         {
             if (maxUnitGroups <= 0)
@@ -70,7 +82,7 @@ namespace PrettyPrintNet
 
             List<string> unitStrings =
                 UnitsLargeToSmall.Where(t => t <= highestUnit && t >= lowestUnit)
-                    .Select(u => new UnitValue(u, GetTimeSpanUnitValue(value, u)))
+                    .Select(unit => new UnitValue(unit, GetInteger(value, unit, unit == lowestUnit, lowestUnitRounding)))
                     .Where(uv => uv.Value > 0)
                     .Take(maxUnitGroups)
                     .Select(uv => GetTimeSpanUnitString(uv.Value, uv.Unit, format, rep, formatProvider))
@@ -93,30 +105,50 @@ namespace PrettyPrintNet
             return firstParts + format.LastGroupSeparator + lastPart;
         }
 
-        private static int GetTimeSpanUnitValue(TimeSpan value, TimeSpanUnit unit)
+        private static int GetInteger(TimeSpan value, TimeSpanUnit unit, bool isLowestUnit, IntegerRounding lowestUnitRounding)
+        {
+            double doubleValue = GetDouble(value, unit);
+            IntegerRounding rounding = isLowestUnit ? lowestUnitRounding : IntegerRounding.Down;
+            switch (rounding)
+            {
+                case IntegerRounding.Down:
+                    return (int) doubleValue;
+                case IntegerRounding.ToNearestOrUp:
+                    return Convert.ToInt32(doubleValue);
+                case IntegerRounding.UpEvenForZero:
+                    // Also round zero to 1, to get 1 second remaining instead of 0 seconds remaining
+                    return (int) doubleValue + 1;
+                case IntegerRounding.Up:
+                    return (int) Math.Ceiling(doubleValue);
+                default:
+                    throw new NotImplementedException("IntegerRounding: " + rounding);
+            }
+        }
+
+        private static double GetDouble(TimeSpan value, TimeSpanUnit unit)
         {
             switch (unit)
             {
                 case TimeSpanUnit.Days:
-                    return value.Days;
+                    return (double) value.Ticks/TimeSpan.TicksPerDay;
 
                 case TimeSpanUnit.Hours:
-                    return value.Hours;
+                    return ((double) value.Ticks/TimeSpan.TicksPerHour)%24;
 
                 case TimeSpanUnit.Minutes:
-                    return value.Minutes;
+                    return ((double)value.Ticks/TimeSpan.TicksPerMinute)%60;
 
                 case TimeSpanUnit.Seconds:
-                    return value.Seconds;
+                    return ((double)value.Ticks/TimeSpan.TicksPerSecond)%60;
 
                 case TimeSpanUnit.Milliseconds:
-                    return value.Milliseconds;
+                    return ((double)value.Ticks/TimeSpan.TicksPerMillisecond)%1000;
 
-                    //case TimeSpanUnit.Microseconds:
-                    //    return Convert.ToInt32(value.Ticks / 10.0);
+                //case TimeSpanUnit.Microseconds:
+                    //return ((double)value.Ticks/10)%1000;
 
-                    //case TimeSpanUnit.Nanoseconds:
-                    //    return Convert.ToInt32(value.Ticks * 100.0);
+                //case TimeSpanUnit.Nanoseconds:
+                    //return ((double)value.Ticks*100)%1000;
 
                 default:
                     throw new ArgumentException(

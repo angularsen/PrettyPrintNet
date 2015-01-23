@@ -71,6 +71,22 @@ namespace PrettyPrintNet.Tests
             Assert.AreEqual("3 hours, 4 minutes and 5 seconds", hoursAndSome.ToPrettyString(3));
         }
 
+        [TestCase(62, Result = "1 minute and 2 seconds")]
+        [TestCase(61.1, Result = "1 minute and 2 seconds")]
+        [TestCase(61, Result = "1 minute and 1 second")]
+        [TestCase(60.1, Result = "1 minute and 1 second")]
+        [TestCase(60, Result = "1 minute")]
+        [TestCase(2, Result = "2 seconds")]
+        [TestCase(1.1, Result = "2 seconds")]
+        [TestCase(1, Result = "1 second")]
+        [TestCase(0.1, Result = "1 second")]
+        [TestCase(0, Result = "0 seconds")]
+        [Test]
+        public string ToTimeRemainingStringRoundsSmallestUnitUp(double seconds)
+        {
+            return TimeSpan.FromSeconds(seconds).ToTimeRemainingString(2);
+        }
+
         //[Test]
         //public void ReturnsMicroseconds()
         //{
