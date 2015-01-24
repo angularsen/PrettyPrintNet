@@ -42,6 +42,7 @@ t2.ToPrettyString(1, lowestUnitRounding: IntegerRounding.ToNearestOrUp); // "4 h
 ```
 
 ## TimeSpan.ToTimeRemainingString()
+This is helpful to avoid showing strings like "0 seconds remaining" or "9 seconds remaining" when it really is 9.999 seconds remaining. It basically just calls ```ToPrettyString()``` with ```IntegerRounding.Up```.
 ```csharp
 TimeSpan.FromSeconds(  60.1).TotimeRemainingString(); // "1 minute and 1 second"
 TimeSpan.FromSeconds(  60  ).TotimeRemainingString(); // "1 minute"
@@ -52,7 +53,7 @@ TimeSpan.FromSeconds(   0.1).TotimeRemainingString(); // "1 second"
 TimeSpan.FromSeconds(   0  ).TotimeRemainingString(); // "0 seconds" 
 ```
 
-## TODO File size
+## TODO Document FileSizeExtensions
  
 Other things to add
 ===========
