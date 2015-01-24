@@ -8,7 +8,7 @@
         Seconds,
         Minutes,
         Hours,
-        Days,
+        Days
         //Weeks,
     }
 }

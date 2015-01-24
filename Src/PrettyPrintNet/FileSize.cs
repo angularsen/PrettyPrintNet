@@ -48,16 +48,15 @@ namespace PrettyPrintNet
             CultureToLongSuffixFuncs = new Dictionary<string, GetSuffixFunc[]>
             {
                 {"en-US", longEnglishSuffixFuncs},
-                {"nb-NO", longEnglishSuffixFuncs},
+                {"nb-NO", longEnglishSuffixFuncs}
             };
 
             CultureToShortSuffixFuncs = new Dictionary<string, GetSuffixFunc[]>
             {
                 {"en-US", shortEnglishSuffixFuncs},
-                {"nb-NO", shortEnglishSuffixFuncs},
+                {"nb-NO", shortEnglishSuffixFuncs}
             };
         }
-
 
         public static string ToLongString(ulong bytes, CultureInfo culture = null, string stringFormat = null)
         {
