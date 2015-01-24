@@ -20,6 +20,6 @@
         /// <summary>
         ///     3wk4d2h
         /// </summary>
-        Compact,
+        Compact
     }
 }
