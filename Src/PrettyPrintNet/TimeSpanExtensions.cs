@@ -1,23 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PrettyPrintNet.InternalTypes;
 
 namespace PrettyPrintNet
 {
-    internal class TimeFormat
-    {
-        public readonly string GroupSeparator;
-        public readonly string LastGroupSeparator;
-        public readonly string UnitValueSeparator;
-
-        public TimeFormat(string groupSeparator, string lastGroupSeparator, string unitValueSeparator)
-        {
-            GroupSeparator = groupSeparator;
-            LastGroupSeparator = lastGroupSeparator;
-            UnitValueSeparator = unitValueSeparator;
-        }
-    }
-
     /// <summary>
     ///     Utilities and helper code for working with TimeSpan.
     /// </summary>
