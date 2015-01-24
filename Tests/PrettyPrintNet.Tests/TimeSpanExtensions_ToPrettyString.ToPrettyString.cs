@@ -74,10 +74,10 @@ namespace PrettyPrintNet.Tests
             return TimeSpan.FromHours(hours).ToPrettyString(lowestUnitRounding: rounding);
         }
 
-        [TestCase(24*3600 - 1, Result = "24 hours")]
-        [TestCase(3600 - 1, Result = "60 minutes")]
-        [TestCase(59.9, Result = "60 seconds")]
-        public string DoesNotChangeUnitWhenRoundingUp(double seconds)
+        [TestCase(24*3600 - 1, Result = "1 day")]
+        [TestCase(3600 - 1, Result = "1 hour")]
+        [TestCase(60 - 0.1, Result = "1 minute")]
+        public string RoundsUnitUp(double seconds)
         {
             return TimeSpan.FromSeconds(seconds).ToPrettyString(lowestUnitRounding: IntegerRounding.Up);
         }
@@ -85,7 +85,7 @@ namespace PrettyPrintNet.Tests
         [TestCase(3600 - 1, Result = "59 minutes")]
         [TestCase(59.9, Result = "59 seconds")]
         [TestCase(0.9, Result = "0 seconds")]
-        public string ChangesUnitWhenRoundingDown(double seconds)
+        public string RoundsUnitDown(double seconds)
         {
             return TimeSpan.FromSeconds(seconds).ToPrettyString(lowestUnitRounding: IntegerRounding.Down);
         }
