@@ -34,6 +34,19 @@ namespace PrettyPrintNet
 // ReSharper restore CompareOfFloatsByEqualityOperator
             };
 
+            GetSuffixFunc[] longKoreanSuffixFuncs =
+            {
+// ReSharper disable CompareOfFloatsByEqualityOperator
+                value => "바이트",
+                value => "키로바이트",
+                value => "메가바이트",
+                value => "기가바이트",
+                value => "테라바이트",
+                value => "페라바이트",
+                value => "엑사바이트"
+// ReSharper restore CompareOfFloatsByEqualityOperator
+            };
+
             GetSuffixFunc[] shortEnglishSuffixFuncs =
             {
                 value => "B",
@@ -48,6 +61,7 @@ namespace PrettyPrintNet
             CultureToLongSuffixFuncs = new Dictionary<string, GetSuffixFunc[]>
             {
                 {"en-US", longEnglishSuffixFuncs},
+                {"ko-KR", longKoreanSuffixFuncs},
                 {"nb-NO", longEnglishSuffixFuncs}
             };
 
