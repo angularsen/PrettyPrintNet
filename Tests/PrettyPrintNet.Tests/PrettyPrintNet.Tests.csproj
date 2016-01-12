@@ -45,6 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeSpanExtensions_ToTimeRemainingString.cs" />
     <Compile Include="TimeSpanExtensions_ToPrettyString.ToPrettyString.cs" />
+    <Compile Include="FileSizeTests.ko-KR.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

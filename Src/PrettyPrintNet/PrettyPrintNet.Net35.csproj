@@ -38,8 +38,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="**\*.cs" Exclude="obj\**" />
+    <Compile Include="FileSize.cs" />
+    <Compile Include="IntegerRounding.cs" />
     <Compile Include="InternalTypes\TimeFormat.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimeSpanExtensions.cs" />
+    <Compile Include="TimeSpanUnit.cs" />
+    <Compile Include="UnitStringRepresentation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
